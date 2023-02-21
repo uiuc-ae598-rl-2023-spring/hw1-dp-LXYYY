@@ -48,7 +48,7 @@ def main():
         # Simulate until episode is done
         done = False
         while not done:
-            a = model.step(s)
+            a = model.eval_state(s)
             (s, r, done) = env.step(a)
             log['t'].append(log['t'][-1] + 1)
             log['s'].append(s)
