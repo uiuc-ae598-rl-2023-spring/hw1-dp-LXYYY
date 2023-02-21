@@ -1,24 +1,23 @@
-from models.sarsa.sarsa_learner import SARSA
+from models.q_learning.q_learning_learner import QLearning
 import numpy as np
 
 
 def learn(env, max_it, epsilon, alpha, **kwargs):
-    agent = SARSA(env, epsilon=epsilon, alpha=alpha)
+    agent = QLearning(env, epsilon=epsilon, alpha=alpha)
 
     for episode in range(max_it):
-        # print(f'Epoch {episode}')
+        # Initialize S
         env.reset()
         done = False
 
-        a = agent.get_a(env.s, agent.epsilon)
         return_per_episode = 0
         while not done:
             s= env.s
+            # Choose A from S using episilon-greedy policy
+            a = agent.get_a(env.s, agent.epsilon)
+            # Take A, observe R, S'
             s_, r, done = env.step(a)
-            a_ = agent.get_a(s_, agent.epsilon)
-            agent.update_Q(s, a, r, s_, a_, done)
-            a = a_
-
+            agent.update_Q(s, a, r, s_, None, done)
 
             return_per_episode += r
 
@@ -31,3 +30,4 @@ def learn(env, max_it, epsilon, alpha, **kwargs):
     print(agent.get_policy_for_all_s().reshape(5, 5))
 
     return agent
+

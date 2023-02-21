@@ -88,3 +88,58 @@ class BaseModel(abc.ABC):
 
     def get_log(self):
         return self.log
+
+
+class ModelFreeAlg(BaseModel):
+    def __init__(self, env, experiment, alpha, epsilon, gamma=0.95):
+        super().__init__(env, experiment)
+        self.Q = np.random.rand(self.env.num_states, self.env.num_actions)
+        # self.Q = np.zeros([self.env.num_states, self.env.num_actions], dtype=np.float32)
+        self.alpha = alpha
+        self.epsilon = epsilon
+        self.gamma = gamma
+        self.policy = 'epsilon_greedy'
+        self.value_learning_method='TD0'
+
+    @abc.abstractmethod
+    def Q_s_(self, s_, a_):
+        return .0
+
+    def update_Q(self, s, a, r, s_, a_, done):
+        if self.value_learning_method == 'TD0':
+            return self.update_Q_TD0(s, a, r, s_, a_, done)
+        else:
+            raise NotImplementedError
+
+    def update_Q_TD0(self, s, a, r, s_, a_, done):
+        q = self.get_Q(s, a)
+        Q_s_ = self.Q_s_(s_, a_) if not done else 0
+        q += self.alpha*(r+self.gamma*Q_s_-q)
+        self.set_Q(s, a, q)
+        return q
+
+    def get_a(self, s, epsilon):
+        if self.policy == 'epsilon_greedy':
+            return self.get_a_epsilon_greedy(s, epsilon)
+        else:
+            raise NotImplementedError
+
+    def get_a_epsilon_greedy(self, s, epsilon):
+        if np.random.random() < epsilon:
+            return np.random.randint(self.env.num_actions)
+        else:
+            return np.argmax(self.get_Q(s))
+
+    def get_Q(self, s, a=None):
+        # i, j = self.env.get_pos(s)
+        return self.Q[s, :] if a is None else self.Q[s, a]
+
+    def set_Q(self, s, a, value):
+        # i, j = self.env.get_pos(s)
+        self.Q[s, a] = value
+
+    def get_policy(self, s):
+        return np.argmax(self.get_Q(s))
+
+    def get_policy_for_all_s(self):
+        return np.argmax(self.Q, axis=1)
