@@ -15,17 +15,12 @@ def learn(env, max_it, **kwargs):
         stable = agent.policy_improvement()
 
         print('Policy:')
-        print(np.round(agent.get_policy_mat().reshape([int(np.sqrt(env.num_states)),
-                                                       int(np.sqrt(env.num_states))]),
-                       1))
+        print(np.round(agent.get_policy_mat(), 1))
 
         print('Values:')
-        print(np.round(agent.get_values_mat().reshape([int(np.sqrt(env.num_states)),
-                                                       int(np.sqrt(env.num_states))]),
-                       1))
+        print(np.round(agent.get_values_mat(), 1))
 
         if stable:
             break
-
 
     return agent

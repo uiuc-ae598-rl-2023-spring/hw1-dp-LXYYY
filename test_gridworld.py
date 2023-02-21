@@ -28,7 +28,6 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--alg', help='algorithm to use', default='policy_iteration')
-    parser.add_argument('--run_test', help='run test', action='store_true')
     args = parser.parse_args()
     print(args.alg)
 
