@@ -23,7 +23,7 @@ def get_learn_function(alg):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--alg', help='algorithm to use', default='policy_iteration')
-    parser.add_argument('--run_test', help='run test', default=False)
+    parser.add_argument('--run_test', help='run test', action='store_true')
     args = parser.parse_args()
     print(args.alg)
 
@@ -48,7 +48,7 @@ def main():
         # Simulate until episode is done
         done = False
         while not done:
-            a = model.eval_state(s)
+            a = model.get_policy(s)
             (s, r, done) = env.step(a)
             log['t'].append(log['t'][-1] + 1)
             log['s'].append(s)

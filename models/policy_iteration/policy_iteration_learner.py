@@ -40,6 +40,7 @@ class PolicyIteration(BaseModel):
 
     def policy_eval(self):
         i = 0
+        delta = 0
         for i in range(self.max_iter_eval):
             delta = 0
             # iterate all states
@@ -50,6 +51,9 @@ class PolicyIteration(BaseModel):
             # if the difference is smaller than theta, stop the iteration
             if delta < self.theta:
                 break
+
+            # add to log
+            self.log.add('mean_value', self.get_mean_value())
 
         print(f'policy evaluation finished after {i + 1} iterations with delta= {delta}')
 

@@ -3,7 +3,7 @@ from models.policy_iteration.policy_iteration_learner import PolicyIteration
 
 
 def learn(env, max_it, **kwargs):
-    agent = PolicyIteration(env, gamma=0.9)
+    agent = PolicyIteration(env, gamma=0.95)
 
     for epoch in range(max_it):
         print(f'Epoch {epoch}')
@@ -26,3 +26,6 @@ def learn(env, max_it, **kwargs):
 
         if stable:
             break
+
+
+    return agent
