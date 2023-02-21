@@ -29,6 +29,9 @@ class GridWorld():
         self.max_num_steps = 100
         self.reset()
 
+    def get_pos(self, s):
+        return s // 5, s % 5
+
     def p(self, s1, s, a):
         if self.hard_version:
             return 0.1 * 0.25 * sum([self._p_easy(s1, s, i) for i in range(4)]) + 0.9 * self._p_easy(s1, s, a)

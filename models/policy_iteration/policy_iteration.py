@@ -2,11 +2,27 @@ import numpy as np
 from models.policy_iteration.policy_iteration_learner import PolicyIteration
 
 
-def learn(env, **kwargs):
-    agent = PolicyIteration(env, env.num_states, env.num_actions, gamma=0.9)
+def learn(env, max_it, **kwargs):
+    agent = PolicyIteration(env, gamma=0.9)
 
-    agent.policy_eval()
+    for epoch in range(max_it):
+        print(f'Epoch {epoch}')
 
-    print(np.round(agent.values.reshape([int(np.sqrt(env.num_states)),
-                                         int(np.sqrt(env.num_states))]),
-                   1))
+        env.reset()
+        agent.policy_eval()
+
+        env.reset()
+        stable = agent.policy_improvement()
+
+        print('Policy:')
+        print(np.round(agent.get_policy_mat().reshape([int(np.sqrt(env.num_states)),
+                                                       int(np.sqrt(env.num_states))]),
+                       1))
+
+        print('Values:')
+        print(np.round(agent.get_values_mat().reshape([int(np.sqrt(env.num_states)),
+                                                       int(np.sqrt(env.num_states))]),
+                       1))
+
+        if stable:
+            break
