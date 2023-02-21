@@ -23,7 +23,7 @@ def get_learn_function(alg):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--alg', help='algorithm to use', default='policy_iteration')
-    parser.add_argument('--run_test', help='run test', detault=False)
+    parser.add_argument('--run_test', help='run test', default=False)
     args = parser.parse_args()
     print(args.alg)
 
@@ -31,7 +31,7 @@ def main():
     env = gridworld.GridWorld(hard_version=False)
 
     learn = get_learn_function(args.alg)
-    model = learn(env)
+    model = learn(env, max_it=20)
 
     if args.run_test:
         # Initialize simulation
