@@ -4,7 +4,11 @@ from models.base_model import ModelBasedAlg
 
 class ValueIteration(ModelBasedAlg):
     def __init__(self, env, scene, gamma=0.95, theta=1e-9, max_it=1000):
-        super().__init__(env, scene=scene, algorithm='value_iteration', gamma=gamma, theta=theta, max_it=max_it)
+        self.algorithm = self.get_algorithm_name([])
+        super().__init__(env, scene=scene, algorithm=self.algorithm, gamma=gamma, theta=theta, max_it=max_it)
+
+    def get_algorithm_name(self, args):
+        return 'value_iteration'
 
     def value_iteration(self):
         i = 0
@@ -23,8 +27,6 @@ class ValueIteration(ModelBasedAlg):
             delta = max(delta, abs(old_v - max_v))
 
         print(f'delta: {delta}')
-
-        self.plot.add('mean_value', self.get_mean_value())
 
         if delta < self.theta:
             return True, delta

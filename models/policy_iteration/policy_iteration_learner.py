@@ -4,12 +4,14 @@ from models.base_model import ModelBasedAlg
 
 class PolicyIteration(ModelBasedAlg):
     def __init__(self, env, scene, gamma=0.95, theta=1e-9, max_it=100):
-        super().__init__(env, scene, 'policy_iteration', gamma=gamma, theta=theta, max_it=max_it)
+        self.algorithm = self.get_algorithm_name([])
+        super().__init__(env, scene, algorithm=self.algorithm, gamma=gamma, theta=theta, max_it=max_it)
         self.gamma = gamma
         self.theta = theta
         self.max_it = max_it
 
-    # Recursive step
+    def get_algorithm_name(self, args):
+        return 'policy_iteration'
 
     def policy_eval(self):
         i = 0
@@ -23,7 +25,6 @@ class PolicyIteration(ModelBasedAlg):
                 self.set_values(s, new_value)
 
             # add to log
-            self.plot.add('mean_value', self.get_mean_value())
 
             # calculate the difference between new value and old value
             # if the difference is smaller than theta, stop the iteration

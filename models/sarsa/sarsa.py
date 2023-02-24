@@ -23,7 +23,8 @@ def learn(env, scene, max_it, epsilon, alpha, **kwargs):
 
         # print(agent.Q)
         # print(np.linalg.norm(agent.Q-old_q))
-        agent.plot.add('return_per_episode', return_per_episode)
+        agent.plot.add('return_per_episode', return_per_episode, xlabel='episode', ylabel='return',
+                       title='Return per Episode of ' + agent.algorithm + ' in ' + agent.scene)
 
     # print(agent.Q)
 

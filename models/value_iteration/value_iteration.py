@@ -8,9 +8,6 @@ def learn(env, scene, max_it, theta=1e-09, load=None, **kwargs):
     if load is not None:
         agent.load_checkpoint(load)
     else:
-        epoch = 0
-        reached_theta = False
-        delta = 0
         for epoch in range(max_it):
             reached_theta, delta = agent.value_iteration()
             print('Policy:')
@@ -19,7 +16,9 @@ def learn(env, scene, max_it, theta=1e-09, load=None, **kwargs):
             print(agent.get_values())
             if reached_theta:
                 break
+            agent.plot.add('mean_value', agent.get_mean_value(), xlabel='epoch', ylabel='mean value',
+                           title='Mean Values of' + agent.get_algorithm_name())
 
-        print('Learning finished after {} epochs, converged {}, delta {}'.format(epoch, reached_theta, delta))
+            print('Learning finished after {} epochs, converged {}, delta {}'.format(epoch, reached_theta, delta))
 
     return agent
