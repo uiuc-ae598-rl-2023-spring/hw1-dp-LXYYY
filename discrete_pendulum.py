@@ -40,6 +40,8 @@ class Pendulum():
         # Time horizon
         self.max_num_steps = 100
 
+        self.state_shape=(self.n_theta, self.n_thetadot)
+
         # Reset to initial conditions
         self.reset()
 
@@ -100,7 +102,7 @@ class Pendulum():
         self.t = self.num_steps * self.dt
         done = (self.num_steps >= self.max_num_steps)
 
-        return (self.s, r, done, u)
+        return (self.s, r, done)
 
     def reset(self):
         # Sample theta and thetadot

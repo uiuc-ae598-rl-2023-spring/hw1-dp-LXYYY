@@ -14,7 +14,7 @@ def learn(env, scene, max_it, epsilon, alpha, **kwargs):
         return_per_episode = 0
         while not done:
             s = env.s
-            s_, r, done, _ = env.step(a)
+            s_, r, done = env.step(a)
             a_ = agent.get_a(s_, agent.epsilon)
             agent.update_Q(s, a, r, s_, a_, done)
             a = a_
@@ -23,10 +23,10 @@ def learn(env, scene, max_it, epsilon, alpha, **kwargs):
 
         # print(agent.Q)
         # print(np.linalg.norm(agent.Q-old_q))
-        agent.log.add('return_per_episode', return_per_episode)
+        agent.plot.add('return_per_episode', return_per_episode)
 
-    print(agent.Q)
+    # print(agent.Q)
 
-    print(agent.get_policy_for_all_s())
+    # print(agent.get_policy_for_all_s())
 
     return agent

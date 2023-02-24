@@ -1,32 +1,20 @@
 import numpy as np
-from models.base_model import BaseModel
+from models.base_model import ModelBasedAlg
 
 
-class PolicyIteration(BaseModel):
-    def __init__(self, env, scene, gamma=0.95, theta=1e-9, max_iter_eval=100):
-        super().__init__(env, scene, 'policy_iteration')
+class PolicyIteration(ModelBasedAlg):
+    def __init__(self, env, scene, gamma=0.95, theta=1e-9, max_it=100):
+        super().__init__(env, scene, 'policy_iteration', gamma=gamma, theta=theta, max_it=max_it)
         self.gamma = gamma
         self.theta = theta
-        self.max_iter_eval = max_iter_eval
+        self.max_it = max_it
 
     # Recursive step
-    def eval_state(self, s, a=None):
-        # take max action
-        v = self.get_values(s)
-
-        # iterate all next states
-        if a is None:
-            a = self.get_policy(s)
-        new_value = 0
-        for s_ in range(self.env.num_states):
-            new_value += self.env.p(s_, s, a) * (self.env.r(s, a) + self.gamma * self.get_values(s_))
-
-        return np.abs(v - new_value), new_value
 
     def policy_eval(self):
         i = 0
         delta = 0
-        for i in range(self.max_iter_eval):
+        for i in range(self.max_it):
             delta = 0
             # iterate all states
             for s in range(self.env.num_states):
@@ -35,7 +23,7 @@ class PolicyIteration(BaseModel):
                 self.set_values(s, new_value)
 
             # add to log
-            self.log.add('mean_value', self.get_mean_value())
+            self.plot.add('mean_value', self.get_mean_value())
 
             # calculate the difference between new value and old value
             # if the difference is smaller than theta, stop the iteration
@@ -46,9 +34,7 @@ class PolicyIteration(BaseModel):
 
     def policy_improvement(self):
         policy_stable = True
-        old_policy = self.get_policy_mat().copy()
-
-        print(self.get_values_mat())
+        old_policy = self.get_policy().copy()
 
         for s in range(self.env.num_states):
             max_a = -1
@@ -65,7 +51,7 @@ class PolicyIteration(BaseModel):
             assert max_a != -1, 'max_a should not be -1'
             self.set_policy(s, max_a)
 
-        policy_delta = np.linalg.norm(self.get_policy_mat() - old_policy)
+        policy_delta = np.linalg.norm(self.get_policy() - old_policy)
 
         if policy_delta != 0:
             policy_stable = False

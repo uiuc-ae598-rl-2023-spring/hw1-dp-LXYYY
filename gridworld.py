@@ -27,6 +27,7 @@ class GridWorld():
         self.num_actions = 4
         self.last_action = None
         self.max_num_steps = 100
+        self.state_shape = (5, 5)
         self.reset()
 
     def get_pos(self, s):

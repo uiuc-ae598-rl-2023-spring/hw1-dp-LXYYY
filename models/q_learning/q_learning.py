@@ -16,17 +16,17 @@ def learn(env, scene, max_it, epsilon, alpha, **kwargs):
             # Choose A from S using episilon-greedy policy
             a = agent.get_a(env.s, agent.epsilon)
             # Take A, observe R, S'
-            s_, r, done, _ = env.step(a)
+            s_, r, done = env.step(a)
             agent.update_Q(s, a, r, s_, None, done)
 
             return_per_episode += r
 
         # print(agent.Q)
         # print(np.linalg.norm(agent.Q-old_q))
-        agent.log.add('return_per_episode', return_per_episode)
+        agent.plot.add('return_per_episode', return_per_episode)
 
     print(agent.Q)
 
-    print(agent.get_policy_for_all_s())
+    print(agent.get_policy())
 
     return agent

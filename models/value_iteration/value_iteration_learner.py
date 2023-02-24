@@ -1,11 +1,10 @@
-from models.policy_iteration.policy_iteration_learner import PolicyIteration
 import numpy as np
+from models.base_model import ModelBasedAlg
 
 
-class ValueIteration(PolicyIteration):
-    def __init__(self, env, gamma=0.95, theta=1e-9, max_iterations=1000):
-        super().__init__(env, gamma, theta, max_iterations)
-        self.log.experiment='value_iteration'
+class ValueIteration(ModelBasedAlg):
+    def __init__(self, env, scene, gamma=0.95, theta=1e-9, max_it=1000):
+        super().__init__(env, scene=scene, algorithm='value_iteration', gamma=gamma, theta=theta, max_it=max_it)
 
     def value_iteration(self):
         i = 0
@@ -15,7 +14,7 @@ class ValueIteration(PolicyIteration):
             max_v = -np.inf
             old_v = self.get_values(s)
             for a in range(self.env.num_actions):
-                _, new_value=self.eval_state(s, a)
+                _, new_value = self.eval_state(s, a)
                 if new_value > max_v:
                     max_v = new_value
                     max_a = a
@@ -25,7 +24,7 @@ class ValueIteration(PolicyIteration):
 
         print(f'delta: {delta}')
 
-        self.log.add('mean_value', self.get_mean_value())
+        self.plot.add('mean_value', self.get_mean_value())
 
         if delta < self.theta:
             return True, delta
