@@ -3,8 +3,8 @@ from models.base_model import BaseModel
 
 
 class PolicyIteration(BaseModel):
-    def __init__(self, env, gamma=0.95, theta=1e-9, max_iter_eval=100):
-        super().__init__(env, 'policy_iteration')
+    def __init__(self, env, scene, gamma=0.95, theta=1e-9, max_iter_eval=100):
+        super().__init__(env, scene, 'policy_iteration')
         self.gamma = gamma
         self.theta = theta
         self.max_iter_eval = max_iter_eval
@@ -33,7 +33,7 @@ class PolicyIteration(BaseModel):
                 new_delta, new_value = self.eval_state(s)
                 delta = max(new_delta, delta)
                 self.set_values(s, new_value)
-                
+
             # add to log
             self.log.add('mean_value', self.get_mean_value())
 
@@ -41,7 +41,6 @@ class PolicyIteration(BaseModel):
             # if the difference is smaller than theta, stop the iteration
             if delta < self.theta:
                 break
-
 
         print(f'policy evaluation finished after {i + 1} iterations with delta= {delta}')
 

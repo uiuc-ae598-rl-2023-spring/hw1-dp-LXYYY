@@ -2,7 +2,6 @@ import random
 import numpy as np
 import scipy.integrate
 
-
 class Pendulum():
     def __init__(self, n_theta=31, n_thetadot=31, n_tau=31):
         # Parameters that describe the physical system
@@ -64,6 +63,9 @@ class Pendulum():
         theta_ddot =  (u - self.params['b'] * x[1] + self.params['m'] * self.params['g'] * self.params['l'] * np.sin(x[0])) / (self.params['m'] * self.params['l']**2)
         return np.array([x[1], theta_ddot])
 
+    def x_to_theta_thetadot(self, x):
+        return ((x[0] + np.pi) % (2 * np.pi)) - np.pi, x[1]
+
     def step(self, a):
         # Verify action is in range
         if not (a in range(self.num_actions)):
@@ -80,8 +82,7 @@ class Pendulum():
         self.s = self._x_to_s(self.x)
 
         # Get theta - wrapping to [-pi, pi) - and thetadot
-        theta = ((self.x[0] + np.pi) % (2 * np.pi)) - np.pi
-        thetadot = self.x[1]
+        theta, thetadot = self.x_to_theta_thetadot(self.x)
 
         # Compute reward
         if abs(thetadot) > self.max_thetadot:
@@ -99,7 +100,7 @@ class Pendulum():
         self.t = self.num_steps * self.dt
         done = (self.num_steps >= self.max_num_steps)
 
-        return (self.s, r, done)
+        return (self.s, r, done, u)
 
     def reset(self):
         # Sample theta and thetadot

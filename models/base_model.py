@@ -5,11 +5,12 @@ import numpy as np
 # define an abc models class
 class BaseModel(abc.ABC):
     class Log:
-        def __init__(self, experiment):
+        def __init__(self, scene, experiment):
             self.values = {}
             self.plot_style = {}
             self.plot_args = {}
             self.experiment = experiment
+            self.scene = scene
 
         def add(self, key, value, plot=None, **kwargs):
             if key not in self.values:
@@ -49,21 +50,19 @@ class BaseModel(abc.ABC):
                                   head_width=0.2, head_length=0.3, fc='k', ec='k')
                 plt.legend()
                 if save:
-                    plt.savefig('figures/gridworld/' +
-                                self.experiment + '_' + k + '.png')
+                    plt.savefig('figures/' + self.scene + '/' + self.experiment + '_' + k + '.png')
                 plt.show()
 
-    def __init__(self, env, experiment):
+    def __init__(self, env, scene, experiment):
         self.env = env
-        self._values = np.random.rand(
-            int(np.sqrt(self.env.num_states)), int(np.sqrt(self.env.num_states)))
+        self._values = np.random.rand(self.env.num_states)
         # generate random policy with uniform distribution sum to 1
         self._policy = np.random.randint(
             0, self.env.num_actions, self._values.shape)
-        self.log = self.Log(experiment=experiment)
+        self.log = self.Log(scene=scene, experiment=experiment)
 
     def get_pos(self, s):
-        return self.env.get_pos(s)
+        return s
 
     def get_values(self, s):
         return self._values[self.get_pos(s)]
@@ -91,15 +90,15 @@ class BaseModel(abc.ABC):
 
 
 class ModelFreeAlg(BaseModel):
-    def __init__(self, env, experiment, alpha, epsilon, gamma=0.95):
-        super().__init__(env, experiment)
+    def __init__(self, env, scene, experiment, alpha, epsilon, gamma=0.95):
+        super().__init__(env, scene, experiment)
         self.Q = np.random.rand(self.env.num_states, self.env.num_actions)
         # self.Q = np.zeros([self.env.num_states, self.env.num_actions], dtype=np.float32)
         self.alpha = alpha
         self.epsilon = epsilon
         self.gamma = gamma
         self.policy = 'epsilon_greedy'
-        self.value_learning_method='TD0'
+        self.value_learning_method = 'TD0'
 
     @abc.abstractmethod
     def Q_s_(self, s_, a_):
@@ -114,7 +113,7 @@ class ModelFreeAlg(BaseModel):
     def update_Q_TD0(self, s, a, r, s_, a_, done):
         q = self.get_Q(s, a)
         Q_s_ = self.Q_s_(s_, a_) if not done else 0
-        q += self.alpha*(r+self.gamma*Q_s_-q)
+        q += self.alpha * (r + self.gamma * Q_s_ - q)
         self.set_Q(s, a, q)
         return q
 

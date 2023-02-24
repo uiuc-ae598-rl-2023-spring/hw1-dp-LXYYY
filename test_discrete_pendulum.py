@@ -63,12 +63,12 @@ def main():
 
     # Plot data and save to png file
     fig, ax = plt.subplots(2, 1, figsize=(10, 10))
-    ax[0].plot_style(log['t'], log['s'])
-    ax[0].plot_style(log['t'][:-1], log['a'])
-    ax[0].plot_style(log['t'][:-1], log['r'])
+    ax[0].plot(log['t'], log['s'])
+    ax[0].plot(log['t'][:-1], log['a'])
+    ax[0].plot(log['t'][:-1], log['r'])
     ax[0].legend(['s', 'a', 'r'])
-    ax[1].plot_style(log['t'], log['theta'])
-    ax[1].plot_style(log['t'], log['thetadot'])
+    ax[1].plot(log['t'], log['theta'])
+    ax[1].plot(log['t'], log['thetadot'])
     ax[1].legend(['theta', 'thetadot'])
     plt.savefig('figures/pendulum/test_discrete_pendulum.png')
 

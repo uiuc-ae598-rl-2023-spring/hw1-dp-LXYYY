@@ -2,8 +2,8 @@ from models.sarsa.sarsa_learner import SARSA
 import numpy as np
 
 
-def learn(env, max_it, epsilon, alpha, **kwargs):
-    agent = SARSA(env, epsilon=epsilon, alpha=alpha)
+def learn(env, scene, max_it, epsilon, alpha, **kwargs):
+    agent = SARSA(env, scene, epsilon=epsilon, alpha=alpha)
 
     for episode in range(max_it):
         # print(f'Epoch {episode}')
@@ -13,12 +13,11 @@ def learn(env, max_it, epsilon, alpha, **kwargs):
         a = agent.get_a(env.s, agent.epsilon)
         return_per_episode = 0
         while not done:
-            s= env.s
-            s_, r, done = env.step(a)
+            s = env.s
+            s_, r, done, _ = env.step(a)
             a_ = agent.get_a(s_, agent.epsilon)
             agent.update_Q(s, a, r, s_, a_, done)
             a = a_
-
 
             return_per_episode += r
 
@@ -28,6 +27,6 @@ def learn(env, max_it, epsilon, alpha, **kwargs):
 
     print(agent.Q)
 
-    print(agent.get_policy_for_all_s().reshape(5, 5))
+    print(agent.get_policy_for_all_s())
 
     return agent
