@@ -17,7 +17,7 @@ def learn(env, scene, max_it, theta=1e-09, load=None, **kwargs):
             if reached_theta:
                 break
             agent.plot.add('mean_value', agent.get_mean_value(), xlabel='epoch', ylabel='mean value',
-                           title='Mean Values of' + agent.get_algorithm_name())
+                           title='Mean Values of ' + agent.algorithm + ' in ' + agent.scene)
 
             print('Learning finished after {} epochs, converged {}, delta {}'.format(epoch, reached_theta, delta))
 

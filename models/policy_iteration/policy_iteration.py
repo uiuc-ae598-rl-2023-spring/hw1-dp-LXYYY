@@ -14,7 +14,7 @@ def learn(env, scene, max_it, load=None, train=True, **kwargs):
             agent.policy_eval()
 
             agent.plot.add('mean_value', agent.get_mean_value(), xlabel='epoch', ylabel='mean value',
-                           title='Mean Values of' + agent.get_algorithm_name())
+                           title='Mean Values of ' + agent.algorithm + ' in ' + agent.scene)
 
             env.reset()
             stable = agent.policy_improvement()

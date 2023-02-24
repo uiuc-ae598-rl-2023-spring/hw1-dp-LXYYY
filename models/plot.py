@@ -82,13 +82,11 @@ class Plot:
                 if self.scene == 'gridworld':
                     self._plot_grid()
                     v_np = np.array(v)
-                    v_np[:, 0] = 4 - v_np[:, 0]
-                    # arrows
-                    for i in range(len(v_np) - 1):
-                        plt.arrow(v_np[i, 1], v_np[i, 0],
-                                  v_np[i + 1, 1] -
-                                  v_np[i, 1], v_np[i + 1, 0] - v_np[i, 0],
-                                  head_width=0.2, head_length=0.3, fc='k', ec='k')
+                    v_np[:, 1] = 4 - v_np[:, 1]
+                    # plot arrows
+                    plt.quiver(v_np[:-1, 0], v_np[:-1, 1], v_np[1:, 0] - v_np[:-1, 0], v_np[1:, 1] - v_np[:-1, 1],
+                               scale_units='xy',
+                               angles='xy', scale=1, **kwargs, **self.plot_args[k])
                     plt.xlabel(self.env.state_names[0])
                     plt.ylabel(self.env.state_names[1])
                 elif self.scene == 'pendulum':
@@ -110,11 +108,11 @@ class Plot:
             self._plot_grid()
             # arrows
             for i in range(len(policy) - 1):
-                y, x = self.env.get_pos(i)
+                x, y = self.env.get_pos(i)
                 # draw policy as arrows, 0: right, 1: up, 2: left, 3: down
                 l = 0.3
                 dxdy = [[l, 0], [0, l], [-l, 0], [0, -l]]
-                plt.arrow(y, 4 - x, dxdy[policy[i]][0], dxdy[policy[i]][1], head_width=0.1, head_length=0.1, fc='k',
+                plt.arrow(x, 4 - y, dxdy[policy[i]][0], dxdy[policy[i]][1], head_width=0.1, head_length=0.1, fc='k',
                           ec='k')
         elif self.scene == 'pendulum':
             # policy to color map
@@ -127,16 +125,16 @@ class Plot:
                 x, y = self.env.get_pos(i)
                 # draw boxes and set size to a grid box without gap, and shape to square
                 plt.scatter(x, y, marker='s', c=cmap((policy[i] - min_p) / (max_p - min_p)), s=100)
-        # set x and y labels
-        plt.xlabel(r'$\theta$')
-        plt.ylabel(r'$\dot{\theta}$')
-        # show color bar and set max and min values to -env.max_tau and env.max_tau
-        cbar = plt.colorbar()
-        cbar.set_ticks([0, 1])
-        # set color bar labels with precision 1
-        cbar.set_ticklabels(['%.1f' % -self.env.max_tau, '%.1f' % self.env.max_tau])
-        # set color bar label
-        cbar.set_label(r'$\tau$')
+            # set x and y labels
+            plt.xlabel(r'$\theta$')
+            plt.ylabel(r'$\dot{\theta}$')
+            # show color bar and set max and min values to -env.max_tau and env.max_tau
+            cbar = plt.colorbar()
+            cbar.set_ticks([0, 1])
+            # set color bar labels with precision 1
+            cbar.set_ticklabels(['%.1f' % -self.env.max_tau, '%.1f' % self.env.max_tau])
+            # set color bar label
+            cbar.set_label(r'$\tau$')
         plt.title('Policy of ' + self.experiment + ' in ' + self.scene)
         if save:
             plt.savefig('figures/' + self.scene + '/' + self.experiment + '/policy.png')
@@ -155,7 +153,7 @@ class Plot:
         # draw q values as colors
         for i in range(len(V)):
             x, y = self.env.get_pos(i)
-            x = self.env.state_shape[0] - 1 - x if self.scene == 'gridworld' else x
+            y = self.env.state_shape[0] - 1 - y if self.scene == 'gridworld' else y
             # draw boxes and set size to a grid box without gap, and shape to square
             plt.scatter(x, y, marker='s', c=cmap((V[i] - max_v_min) / (max_v_max - max_v_min)), s=1000)
 
