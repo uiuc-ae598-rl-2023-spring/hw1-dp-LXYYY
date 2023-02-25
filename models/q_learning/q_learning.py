@@ -26,6 +26,10 @@ def learn(env, scene, max_it, epsilon, alpha, **kwargs):
         agent.plot.add('return_per_episode', return_per_episode, xlabel='episode', ylabel='return',
                        title='Return per Episode of ' + agent.algorithm + ' in ' + agent.scene)
 
+        if episode % (0.1 * max_it) == 0:
+            print(f'Episode {episode} of {max_it} finished')
+
+
     print(agent.Q)
 
     print(agent.get_policy())

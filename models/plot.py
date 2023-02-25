@@ -172,6 +172,13 @@ class Plot:
             plt.savefig('figures/' + self.scene + '/' + self.experiment + '/value_function.png')
         plt.show()
 
+    def clear(self, k):
+        # remove the key k from all dictionaries
+        for i in range(len(k)):
+            if k[i] in self.values:
+                del self.values[k[i]]
+
+
     @staticmethod
     def plot_compare(scenes, algorithms, key, title, save=False, **kwargs):
         # get plot_interval and remove it from kwargs
