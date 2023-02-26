@@ -1,4 +1,4 @@
-Results in [results](results.html)
+Results in [results](results.pdf)
 
 # HW1 - Dynamic Programming
 
