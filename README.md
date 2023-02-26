@@ -1,3 +1,5 @@
+Results in [results](results.md)
+
 # HW1 - Dynamic Programming
 
 ## What to do
