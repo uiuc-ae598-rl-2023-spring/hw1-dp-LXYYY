@@ -1,5 +1,6 @@
 import random
 
+
 class GridWorld():
     """
     The world is a 5 x 5 grid based on Example 3.5 from Sutton 2019. There are 25 states. We index these states as follows:
@@ -27,7 +28,12 @@ class GridWorld():
         self.num_actions = 4
         self.last_action = None
         self.max_num_steps = 100
+        self.state_shape = (5, 5)
+        self.state_names = ['x', 'y']
         self.reset()
+
+    def get_pos(self, s):
+        return s % 5, s // 5
 
     def p(self, s1, s, a):
         if self.hard_version:
@@ -142,13 +148,13 @@ class GridWorld():
             j = self.s % 5
 
             # Apply action to i, j coordinates
-            if a == 0:      # right
+            if a == 0:  # right
                 j += 1
-            elif a == 1:    # up
+            elif a == 1:  # up
                 i -= 1
-            elif a == 2:    # left
+            elif a == 2:  # left
                 j -= 1
-            elif a == 3:    # down
+            elif a == 3:  # down
                 i += 1
             else:
                 raise Exception(f'invalid action: {a}')

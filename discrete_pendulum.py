@@ -7,10 +7,10 @@ class Pendulum():
     def __init__(self, n_theta=31, n_thetadot=31, n_tau=31):
         # Parameters that describe the physical system
         self.params = {
-            'm': 1.0,   # mass
-            'g': 9.8,   # acceleration of gravity
-            'l': 1.0,   # length
-            'b': 0.1,   # coefficient of viscous friction
+            'm': 1.0,  # mass
+            'g': 9.8,  # acceleration of gravity
+            'l': 1.0,  # length
+            'b': 0.1,  # coefficient of viscous friction
         }
 
         # Maximum absolute angular velocity
@@ -41,6 +41,9 @@ class Pendulum():
         # Time horizon
         self.max_num_steps = 100
 
+        self.state_shape = (self.n_theta, self.n_thetadot)
+        self.state_names = [r'$\theta$', r'$\dot{\theta}$']
+
         # Reset to initial conditions
         self.reset()
 
@@ -61,8 +64,12 @@ class Pendulum():
         return -self.max_tau + ((2 * self.max_tau * a) / (self.n_tau - 1))
 
     def _dxdt(self, x, u):
-        theta_ddot =  (u - self.params['b'] * x[1] + self.params['m'] * self.params['g'] * self.params['l'] * np.sin(x[0])) / (self.params['m'] * self.params['l']**2)
+        theta_ddot = (u - self.params['b'] * x[1] + self.params['m'] * self.params['g'] * self.params['l'] * np.sin(
+            x[0])) / (self.params['m'] * self.params['l'] ** 2)
         return np.array([x[1], theta_ddot])
+
+    def x_to_theta_thetadot(self, x):
+        return ((x[0] + np.pi) % (2 * np.pi)) - np.pi, x[1]
 
     def step(self, a):
         # Verify action is in range
@@ -73,15 +80,15 @@ class Pendulum():
         u = self._a_to_u(a)
 
         # Solve ODEs to find new x
-        sol = scipy.integrate.solve_ivp(fun=lambda t, x: self._dxdt(x, u), t_span=[0, self.dt], y0=self.x, t_eval=[self.dt])
+        sol = scipy.integrate.solve_ivp(fun=lambda t, x: self._dxdt(x, u), t_span=[0, self.dt], y0=self.x,
+                                        t_eval=[self.dt])
         self.x = sol.y[:, 0]
 
         # Convert x to s
         self.s = self._x_to_s(self.x)
 
         # Get theta - wrapping to [-pi, pi) - and thetadot
-        theta = ((self.x[0] + np.pi) % (2 * np.pi)) - np.pi
-        thetadot = self.x[1]
+        theta, thetadot = self.x_to_theta_thetadot(self.x)
 
         # Compute reward
         if abs(thetadot) > self.max_thetadot:
@@ -113,6 +120,16 @@ class Pendulum():
         self.t = self.num_steps * self.dt
 
         return self.s
+
+    def get_pos(self, s):
+        theta = np.linspace(-np.pi * (1 - (1 / self.n_theta)), np.pi * (1 - (1 / self.n_theta)), self.n_theta)
+        thetadot = np.linspace(-self.max_thetadot * (1 - (1 / self.n_thetadot)),
+                               self.max_thetadot * (1 - (1 / self.n_thetadot)), self.n_thetadot)
+        i = s // self.n_thetadot
+        j = s % self.n_thetadot
+        x = [theta[i], thetadot[j]]
+        theta, thetadot = self.x_to_theta_thetadot(x)
+        return theta, thetadot
 
     def render(self):
         # TODO (we will happily accept a PR to create a graphic visualization of the pendulum)

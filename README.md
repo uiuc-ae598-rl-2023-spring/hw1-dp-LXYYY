@@ -1,3 +1,5 @@
+Results in [results](results.pdf)
+
 # HW1 - Dynamic Programming
 
 ## What to do
